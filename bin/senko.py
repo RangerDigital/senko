@@ -1,5 +1,8 @@
-import requests as urequests
-import hashlib as uhashlib
+# import requests as urequests
+# import hashlib as uhashlib
+
+import urequests
+import uhashlib
 
 
 def why():
