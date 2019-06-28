@@ -19,18 +19,20 @@ class Senko:
 
     def _check_hash(self, x, y):
         print("DEBUG: Checking hashes!")
-        x = uhashlib.sha1(x.encode())
-        y = uhashlib.sha1(y.encode())
+        x_hash = uhashlib.sha1(x.encode())
+        y_hash = uhashlib.sha1(y.encode())
 
-        x = x.digest()
-        y = y.digest()
+        x = x_hash.digest()
+        y = y_hash.digest()
 
         print("DEBUG: Latest version HASH:", x)
         print("DEBUG: Local version HASH:", y)
 
-        if x == y:
+        if str(x) == str(y):
+            print("DEBUG: Files the same!")
             return True
         else:
+            print("DEBUG: Files NOT the same!")
             return False
 
     def _check_all(self):
@@ -49,7 +51,7 @@ class Senko:
                 local_version = local_file.read()
                 local_file.close()
 
-            except FileNotFound:
+            except:
                 local_version = ""
 
             print("DEBUG: Local file:")
