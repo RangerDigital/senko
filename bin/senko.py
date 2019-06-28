@@ -35,6 +35,14 @@ class Senko:
             print("DEBUG: Files NOT the same!")
             return False
 
+    def _check_self(self, files):
+        print("DEBUG: Check if self upgrade!")
+        import __main__ as main
+        if main.__file__ in files:
+            return True
+        else:
+            return False
+
     def _check_all(self):
         print("DEBUG: _check_all running!")
         changed_files = []
@@ -72,9 +80,13 @@ class Senko:
             return True
 
     def update(self):
-        for file in self._check_all():
+        changed_files = self._check_all()
+        for file in changed_files:
             print("DEBUG: Updating file:", file)
             local_file = open(file, "w")
             local_file.write(urequests.get(self.url + file).text)
             local_file.close()
-        return True
+
+        if self._check_self(changed_files):
+            print("DEBUG: Auto update detected!")
+            print("Reboot!")
