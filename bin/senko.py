@@ -2,6 +2,12 @@ import urequests
 import uhashlib
 
 
+class Test:
+    def __init__(self, x, y):
+
+        self.x = x
+        self.y = y
+
 class Senko:
     def __init__(self, url, files=[], username=None, password=None):
         self.url = url
