@@ -43,8 +43,8 @@ class Senko:
             print("DEBUG: Checking files:", file)
             latest_version = urequests.get(self.url + file).text
 
-            print("DEBUG: Latest file:")
-            print(latest_version)
+            # print("DEBUG: Latest file:")
+            # print(latest_version)
 
             try:
                 local_file = open(file, "r")
@@ -54,8 +54,8 @@ class Senko:
             except:
                 local_version = ""
 
-            print("DEBUG: Local file:")
-            print(local_version)
+            # print("DEBUG: Local file:")
+            # print(local_version)
 
             if not self._check_hash(latest_version, local_version):
                 changed_files.append(file)
