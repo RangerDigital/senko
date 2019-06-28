@@ -5,14 +5,6 @@ import urequests
 import uhashlib
 
 
-def why():
-    print("Because why not?")
-
-class Test:
-    def __init__(self, x, y):
-
-        self.x = x
-        self.y = y
 
 class Senko:
     def __init__(self, url, files=[], username=None, password=None):
@@ -23,20 +15,34 @@ class Senko:
 
         self.files = files
 
+        print("DEBUG: Class URL:", self.url)
+
     def _check_hash(self, x, y):
+        print("DEBUG: Checking hashes!")
         x = uhashlib.sha1(x.encode())
         y = uhashlib.sha1(y.encode())
 
-        if x.digest() == y.digest():
+        x = x.digest()
+        y = y.digest()
+
+        print("DEBUG: Latest version HASH:", x)
+        print("DEBUG: Local version HASH:", y)
+
+        if x == y:
             return True
         else:
             return False
 
     def _check_all(self):
+        print("DEBUG: _check_all running!")
         changed_files = []
 
         for file in self.files:
+            print("DEBUG: Checking files:", file)
             latest_version = urequests.get(self.url + file).text
+
+            print("DEBUG: Latest file:")
+            print(latest_version)
 
             try:
                 local_file = open(file, "r")
@@ -46,8 +52,14 @@ class Senko:
             except FileNotFound:
                 local_version = ""
 
+            print("DEBUG: Local file:")
+            print(local_version)
+
             if not self._check_hash(latest_version, local_version):
                 changed_files.append(file)
+
+        print("DEBUG: Changed files:")
+        print(changed_files)
 
         return changed_files
 
@@ -59,10 +71,8 @@ class Senko:
 
     def update(self):
         for file in self._check_all():
-              local_file = open(file, "w")
-              local_file.write(urequests.get(self.url + file).text)
-              local_file.close()
+            print("DEBUG: Updating file:", file)
+            local_file = open(file, "w")
+            local_file.write(urequests.get(self.url + file).text)
+            local_file.close()
         return True
-
-x = Senko("ok", ["boot.py"])
-print(x.files)
