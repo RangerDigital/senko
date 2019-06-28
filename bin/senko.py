@@ -1,6 +1,9 @@
-import urequests
-import uhashlib
+import requests as urequests
+import hashlib as uhashlib
 
+
+def why():
+    print("Because why not?")
 
 class Test:
     def __init__(self, x, y):
@@ -51,9 +54,12 @@ class Senko:
         else:
             return True
 
-    def update(self, False):
+    def update(self):
         for file in self._check_all():
               local_file = open(file, "w")
               local_file.write(urequests.get(self.url + file).text)
               local_file.close()
         return True
+
+x = Senko("ok", ["boot.py"])
+print(x.files)
