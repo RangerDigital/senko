@@ -7,52 +7,48 @@ import uhashlib
 
 
 class Senko:
-    def __init__(self, url, files=[], username=None, password=None):
+    def __init__(self, url, files=[], username=None, password=None, debug=False):
         self.url = url
+        self.debug = debug
 
         self.username = username
         self.password = password
 
         self.files = files
 
-        print("DEBUG: Class URL:", self.url)
+    def _debug(self, *args):
+        if self.debug:
+            for arg in args:
+                print(arg + " ")
 
     def _check_hash(self, x, y):
-        print("DEBUG: Checking hashes!")
+        self._debug("DEBUG: Checking hashes!")
         x_hash = uhashlib.sha1(x.encode())
         y_hash = uhashlib.sha1(y.encode())
 
         x = x_hash.digest()
         y = y_hash.digest()
 
-        print("DEBUG: Latest version HASH:", x)
-        print("DEBUG: Local version HASH:", y)
+        self._debug("DEBUG: Latest version HASH:", x)
+        self._debug("DEBUG: Local version HASH:", y)
 
         if str(x) == str(y):
-            print("DEBUG: Files the same!")
+            self._debug("DEBUG: Files the same!")
             return True
         else:
-            print("DEBUG: Files NOT the same!")
-            return False
-
-    def _check_self(self, files):
-        print("DEBUG: Check if self upgrade!")
-        import __main__ as main
-        if main.__file__ in files:
-            return True
-        else:
+            self._debug("DEBUG: Files NOT the same!")
             return False
 
     def _check_all(self):
-        print("DEBUG: _check_all running!")
+        self._debug("DEBUG: _check_all running!")
         changed_files = []
 
         for file in self.files:
-            print("DEBUG: Checking files:", file)
+            self._debug("DEBUG: Checking files:", file)
             latest_version = urequests.get(self.url + file).text
 
-            # print("DEBUG: Latest file:")
-            # print(latest_version)
+            # self._debug("DEBUG: Latest file:")
+            # self._debug(latest_version)
 
             try:
                 local_file = open(file, "r")
@@ -62,14 +58,14 @@ class Senko:
             except:
                 local_version = ""
 
-            # print("DEBUG: Local file:")
-            # print(local_version)
+            # self._debug("DEBUG: Local file:")
+            # self._debug(local_version)
 
             if not self._check_hash(latest_version, local_version):
                 changed_files.append(file)
 
-        print("DEBUG: Changed files:")
-        print(changed_files)
+        self._debug("DEBUG: Changed files:")
+        self._debug(changed_files)
 
         return changed_files
 
@@ -82,11 +78,11 @@ class Senko:
     def update(self):
         changed_files = self._check_all()
         for file in changed_files:
-            print("DEBUG: Updating file:", file)
+            self._debug("DEBUG: Updating file:", file)
             local_file = open(file, "w")
             local_file.write(urequests.get(self.url + file).text)
             local_file.close()
 
         if self._check_self(changed_files):
-            print("DEBUG: Auto update detected!")
-            print("Reboot!")
+            self._debug("DEBUG: Auto update detected!")
+            self._debug("Reboot!")
