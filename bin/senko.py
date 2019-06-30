@@ -1,88 +1,81 @@
-# import requests as urequests
-# import hashlib as uhashlib
-
 import urequests
 import uhashlib
 
 
-
 class Senko:
-    def __init__(self, url, files=[], username=None, password=None, debug=False):
+    def __init__(self, url, files=[], headers=[], debug=False):
         self.url = url
-        self.debug = debug
+        self.headers = headers
 
-        self.username = username
-        self.password = password
+        self.debug = debug
 
         self.files = files
 
-    def _debug(self, *args):
+    def _debug(self, msg):
         if self.debug:
-            for arg in args:
-                print(arg + " ")
+            print(msg)
 
     def _check_hash(self, x, y):
-        self._debug("DEBUG: Checking hashes!")
         x_hash = uhashlib.sha1(x.encode())
         y_hash = uhashlib.sha1(y.encode())
 
         x = x_hash.digest()
         y = y_hash.digest()
 
-        self._debug("DEBUG: Latest version HASH:", x)
-        self._debug("DEBUG: Local version HASH:", y)
-
         if str(x) == str(y):
-            self._debug("DEBUG: Files the same!")
             return True
         else:
-            self._debug("DEBUG: Files NOT the same!")
             return False
 
+    def _get_file(self, url):
+        payload = urequests.get(url, headers=self.headers)
+        code = payload.status_code
+
+        if code == 200:
+            return payload.text
+        else:
+            self._debug("Request returned error code, " + str(code))
+            return None
+
     def _check_all(self):
-        self._debug("DEBUG: _check_all running!")
-        changed_files = []
+        changes = []
 
         for file in self.files:
-            self._debug("DEBUG: Checking files:", file)
-            latest_version = urequests.get(self.url + file).text
-
-            # self._debug("DEBUG: Latest file:")
-            # self._debug(latest_version)
+            latest_version = self._get_file(self.url + file)
+            if latest_version is None:
+                return []
 
             try:
-                local_file = open(file, "r")
-                local_version = local_file.read()
-                local_file.close()
-
+                with open(file, "r") as local_file:
+                    local_version = local_file.read()
             except:
                 local_version = ""
 
-            # self._debug("DEBUG: Local file:")
-            # self._debug(local_version)
-
             if not self._check_hash(latest_version, local_version):
-                changed_files.append(file)
+                changes.append(file)
 
-        self._debug("DEBUG: Changed files:")
-        self._debug(changed_files)
-
-        return changed_files
+        return changes
 
     def fetch(self):
         if not self._check_all():
+            self._debug("No changes detected!")
             return False
         else:
+            self._debug("Changes detected!")
             return True
 
     def update(self):
-        changed_files = self._check_all()
-        for file in changed_files:
-            self._debug("DEBUG: Updating file:", file)
-            local_file = open(file, "w")
-            local_file.write(urequests.get(self.url + file).text)
-            local_file.close()
+        self._debug("Updating...")
+        changes = self._check_all()
 
-        if self._check_self(changed_files):
-            self._debug("DEBUG: Auto update detected!")
-            self._debug("Reboot!")
+        for file in changes:
+            self._debug("File: " + file)
+            with open(file, "w") as local_file:
+                local_file.write(self._get_file(self.url + file))
+
+        if changes:
+            self._debug("Done!")
+            return True
+        else:
+            self._debug("No changes were made!")
+            return False
