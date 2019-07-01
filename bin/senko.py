@@ -3,11 +3,16 @@ import uhashlib
 
 
 class Senko:
-    def __init__(self, url, files=[], headers=[], debug=False):
+    def __init__(self, url, files, headers=[]):
+        """Senko OTA agent class.
+
+        Args:
+            url (str): URL to root directory.
+            files (list): Files included in OTA update.
+            headers (list, optional): Headers for urequests.
+        """
         self.url = url
         self.headers = headers
-
-        self.debug = debug
 
         self.files = files
 
@@ -52,12 +57,22 @@ class Senko:
         return changes
 
     def fetch(self):
+        """Check if newer version is available.
+
+        Returns:
+            True - if is, False - if not.
+        """
         if not self._check_all():
             return False
         else:
             return True
 
     def update(self):
+        """Replace all changed files with newer one.
+
+        Returns:
+            True - if changes were made, False - if not.
+        """
         changes = self._check_all()
 
         for file in changes:
