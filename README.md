@@ -1,8 +1,9 @@
 # Senko - OTA Update Agent
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+![Senko](./Banner.png)
+
 The simplest **OTA** solution for your **Micropython** project.
-For more information visit [**Senko**](https://senko.bednarski.dev) official website.
 
 Developed and tested on **ESP8266**, but should work fine on other boards.
 
@@ -20,8 +21,6 @@ sudo ampy -p /dev/ttyUSB0 put bin/senko.py
 ```
 
 ## Usage
-
-> For more details visit [**Senko**](https://senko.bednarski.dev) official website.
 
 Senko agent is flexible, that means you are responsible for network connections and reboots.
 
