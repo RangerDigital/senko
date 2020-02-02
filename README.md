@@ -29,8 +29,7 @@ If they are not, Senko saves remote files from **GitHub** repository to your mic
 <br>
 
 ## 🔥 Installation
-Senko consists of a single `senko.py` module that you import.
-
+Senko consists of a single `senko.py` module that you import.  
 You can use **Ampy** or **WebREPL** to load `/senko/senko.py` module to your microcontroller:
 
 ```bash
