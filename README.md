@@ -10,18 +10,18 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Senko is the simplest **Over The Air** updater solution for your **Micropython** projects based on **ESP8266** and **ESP32** microcontrollers. Senko synchronizes selected files on your microcontroller with the **GitHub** repository.
+Senko is the simplest **Over The Air** updater solution for your **Micropython** projects based on **ESP8266** and **ESP32**. Senko synchronizes selected files on your microcontroller with the remote ones from **GitHub** repository.
 
 >🚧 By all means, Senko is not the best implementation, but for my simple IoT projects, It was adequate!
 
-I used Senko to automatically deploy the latest `master` branch to my ESP8266 fleet using  `raw.githubusercontent.com`.
+I used Senko to automatically deploy the latest `master` branch to my **ESP8266** fleet using  `raw.githubusercontent.com`.
 
 <br>
 
 ## 🛠 How Senko Works
 Every time `.fetch()` or `.update()` methods are called Senko compares **SHA1** hashes of local files with remote ones to determine if they are the same.
 
-If they are not, Senko saves remote files from GitHub to your microcontroller. This means you need to reboot to run the latest code.
+If they are not, Senko saves remote files from **GitHub** to your microcontroller. This means you need to reboot to run the latest code.
 
 >🚧 You are responsible for implementing a network connection and reboot strategy!
 
@@ -55,6 +55,8 @@ To get that **URL** simply click the `RAW` button on one of the files that you w
 
 >💡 You can even specify what branch Senko will update from!
 
+<br>
+
 Then after connecting to Wi-Fi network call `OTA.update()`:
 ```python
 # boot.py
@@ -73,6 +75,8 @@ if OTA.update():
     machine.reset()
 ```
 This setup will try to keep `boot.py` and `main.py` updated every time microcontroller boots.
+
+<br>
 
 If you only want to check if the newer version of files exists call `OTA.fetch()`:
 ```python
