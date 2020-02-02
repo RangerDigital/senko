@@ -1,6 +1,6 @@
 <p align="center">
   <br /><img
-    width="800"
+    width="950"
     src="logo.png"
     alt="Senko – OTA Updater"
   />
