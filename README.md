@@ -12,8 +12,8 @@
 
 Senko is the simplest **Over The Air** updater solution for your **Micropython** projects based on **ESP8266** and **ESP32**.
 
-Senko synchronizes selected files on your microcontroller with the remote ones from **GitHub** repository.
-I used **Senko** to automatically deploy the latest `master` branch to my **ESP8266** sensors fleet.
+Senko synchronizes selected files on your microcontroller with the remote ones from **GitHub** repository.  
+I used Senko to automatically deploy the latest `master` branch to my ESP8266 sensors fleet.
 
 >🚧 By all means, Senko is not the best implementation, but for my simple IoT projects, It was adequate!
 
@@ -29,7 +29,8 @@ If they are not, Senko saves remote files from **GitHub** repository to your mic
 <br>
 
 ## 🔥 Installation
-Senko consists of a single `senko.py` module that you import.  
+Senko consists of a single `senko.py` module that you import.
+
 You can use **Ampy** or **WebREPL** to load `/senko/senko.py` module to your microcontroller:
 
 ```bash
