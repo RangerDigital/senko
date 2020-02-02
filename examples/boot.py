@@ -39,14 +39,13 @@ def main():
     SSID = ""
     PASSWORD = ""
 
-    GITHUB_URL = "https://raw.githubusercontent.com/RangerDigital/senko-ota/master/examples/"
-
     connect_wlan(SSID, PASSWORD)
 
-    OTA = senko.Senko(GITHUB_URL, ["boot.py", "main.py"])
+    GITHUB_URL = "https://raw.githubusercontent.com/RangerDigital/senko/master/examples/"
+    OTA = senko.Senko(GITHUB_URL, ["main.py"])
 
     if OTA.update():
-        print("OTA Updated to latest version!")
+        print("Updated to the latest version! Rebooting...")
         machine.reset()
 
 
