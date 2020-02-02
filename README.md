@@ -10,18 +10,20 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Senko is the simplest **Over The Air** updater solution for your **Micropython** projects based on **ESP8266** and **ESP32**. Senko synchronizes selected files on your microcontroller with the remote ones from **GitHub** repository.
+Senko is the simplest **Over The Air** updater solution for your **Micropython** projects based on **ESP8266** and **ESP32**.
+
+Senko synchronizes selected files on your microcontroller with the remote ones from **GitHub** repository.
+
+I used **Senko** to automatically deploy the latest `master` branch to my **ESP8266** sensors fleet.
 
 >🚧 By all means, Senko is not the best implementation, but for my simple IoT projects, It was adequate!
 
-I used Senko to automatically deploy the latest `master` branch to my **ESP8266** fleet using  `raw.githubusercontent.com`.
-
 <br>
 
-## 🛠 How Senko Works
+## 🛠 Operating Principle
 Every time `.fetch()` or `.update()` methods are called Senko compares **SHA1** hashes of local files with remote ones to determine if they are the same.
 
-If they are not, Senko saves remote files from **GitHub** to your microcontroller. This means you need to reboot to run the latest code.
+If they are not, Senko saves remote files from **GitHub** repository to your microcontroller. This means you need to reboot to run the latest code.
 
 >🚧 You are responsible for implementing a network connection and reboot strategy!
 
@@ -51,12 +53,13 @@ GITHUB_URL = "https://github.com/RangerDigital/senko/blob/master/examples/"
 OTA = senko.Senko(GITHUB_URL, ["boot.py", "main.py"])
 ```
 
-To get that **URL** simply click the `RAW` button on one of the files that you want to track and then strip the name of that file from it.
+To get the **URL** simply click the `RAW` button on the one of the files that you want to track and then strip the name of that file from it.
 
 >💡 You can even specify what branch Senko will update from!
 
 <br>
 
+### Updating
 Then after connecting to Wi-Fi network call `OTA.update()`:
 ```python
 # boot.py
@@ -78,6 +81,7 @@ This setup will try to keep `boot.py` and `main.py` updated every time microcont
 
 <br>
 
+### Fetching
 If you only want to check if the newer version of files exists call `OTA.fetch()`:
 ```python
 if OTA.fetch():
@@ -86,7 +90,7 @@ else:
     print("Up to date!")
 ```
 
-Check out a simple example of usage from `examples` directory!
+>💡 Check out a simple example of usage from `examples` directory!
 
 <br>
 
