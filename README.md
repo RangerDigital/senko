@@ -37,10 +37,6 @@ You can use **Ampy** or **WebREPL** to load `/senko/senko.py` module to your mic
 sudo ampy -p /dev/ttyUSB0 put senko.py
 ```
 
-<p align="center">
-	<img src="terminal.gif" alt="Ampy Usage" width=750/>
-</p>
-
 <br>
 
 ## 🎉 Usage
