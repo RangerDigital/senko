@@ -93,5 +93,13 @@ else:
 
 <br>
 
+## 🚧 Contributing
+
+**You are more than welcome to help me improve Senko!**
+
+Just fork this project from the `master` branch and submit a Pull Request (PR).
+
+<br>
+
 ## 📃 License
 This project is licensed under [GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/) .
