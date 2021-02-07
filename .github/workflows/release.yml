@@ -17,6 +17,9 @@ jobs:
         with:
           python-version: "3.8"
 
+      - name: Install Twine
+        run: pip install twine
+
       - name: Build package
         run: python setup.py sdist
 
