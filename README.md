@@ -49,9 +49,21 @@ You have to specify **URL** to the **GitHub** directory containing your code and
 import senko
 
 GITHUB_URL = "https://github.com/RangerDigital/senko/blob/master/examples/"
-OTA = senko.Senko(GITHUB_URL, ["boot.py", "main.py"])
+OTA = senko.Senko(url=GITHUB_URL, ["boot.py", "main.py"])
 ```
 
+```python
+# boot.py
+import senko
+
+OTA = senko.Senko(
+  user='ocktokit', # required
+  repo='octokit-iot', # required
+  branch='master', # defaults to 'master'
+  working_dir='app', # defaults to 'app'
+  files = ["boot.py", "main.py"]
+)
+```
 To get the **URL** simply click the `RAW` button on the one of the files that you want to track and then strip the name of that file from it.
 
 >💡 You can even specify what branch Senko will update from!

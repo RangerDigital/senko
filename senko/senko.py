@@ -3,17 +3,24 @@ import uhashlib
 
 
 class Senko:
-    def __init__(self, url, files, headers=[]):
+    raw = 'https://raw.githubusercontent.com'
+    github = 'https://github.com'
+
+    def __init__(self, user, repo, url=None, branch='master', working_dir='app', files=['boot.py', 'main.py'], headers={}):
         """Senko OTA agent class.
 
         Args:
+            user (str): github user
+            repo (str): github repo to fetch
+            branch (str): github repo branch to fetch: default master
+            working_dir (str): directory inside github repo wheren the micropython app is at
             url (str): URL to root directory.
             files (list): Files included in OTA update.
             headers (list, optional): Headers for urequests.
         """
-        self.url = url.rstrip("/").replace("https://github.com", "https://raw.githubusercontent.com")
+        self.base_url = '{}/{}/{}'.format(self.raw, user, repo) if user else url.replace(self.github, self.raw)
+        self.url = url if url is not None else '{}/{}/{}'.format(self.base_url, branch, working_dir)
         self.headers = headers
-
         self.files = files
 
     def _check_hash(self, x, y):
@@ -43,7 +50,7 @@ class Senko:
         for file in self.files:
             latest_version = self._get_file(self.url + "/" + file)
             if latest_version is None:
-                return []
+                continue
 
             try:
                 with open(file, "r") as local_file:
