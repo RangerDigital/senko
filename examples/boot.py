@@ -1,8 +1,7 @@
 import gc
-import network
-
-import senko
 import machine
+import network
+import upip
 
 
 def connect_wlan(ssid, password):
@@ -36,13 +35,17 @@ def main():
     gc.collect()
     gc.enable()
 
+    # Wi-Fi credentials
     SSID = ""
     PASSWORD = ""
 
     connect_wlan(SSID, PASSWORD)
 
-    GITHUB_URL = "https://raw.githubusercontent.com/RangerDigital/senko/master/examples/"
-    OTA = senko.Senko(GITHUB_URL, ["main.py"])
+    # Install Senko from PyPi
+    upip.install("micropython-senko")
+
+    import senko
+    OTA = senko.Senko(user="RangerDigital", repo="senko", working_dir="examples", files=["main.py"])
 
     if OTA.update():
         print("Updated to the latest version! Rebooting...")
