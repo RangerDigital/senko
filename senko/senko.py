@@ -3,23 +3,23 @@ import uhashlib
 
 
 class Senko:
-    raw = 'https://raw.githubusercontent.com'
-    github = 'https://github.com'
+    raw = "https://raw.githubusercontent.com"
+    github = "https://github.com"
 
-    def __init__(self, user, repo, url=None, branch='master', working_dir='app', files=['boot.py', 'main.py'], headers={}):
+    def __init__(self, user, repo, url=None, branch="master", working_dir="app", files=["boot.py", "main.py"], headers={}):
         """Senko OTA agent class.
 
         Args:
-            user (str): github user
-            repo (str): github repo to fetch
-            branch (str): github repo branch to fetch: default master
-            working_dir (str): directory inside github repo wheren the micropython app is at
+            user (str): GitHub user.
+            repo (str): GitHub repo to fetch.
+            branch (str): GitHub repo branch. (master)
+            working_dir (str): Directory inside GitHub repo where the micropython app is.
             url (str): URL to root directory.
             files (list): Files included in OTA update.
             headers (list, optional): Headers for urequests.
         """
-        self.base_url = '{}/{}/{}'.format(self.raw, user, repo) if user else url.replace(self.github, self.raw)
-        self.url = url if url is not None else '{}/{}/{}'.format(self.base_url, branch, working_dir)
+        self.base_url = "{}/{}/{}".format(self.raw, user, repo) if user else url.replace(self.github, self.raw)
+        self.url = url if url is not None else "{}/{}/{}".format(self.base_url, branch, working_dir)
         self.headers = headers
         self.files = files
 
