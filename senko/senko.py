@@ -5,7 +5,7 @@ import uhashlib
 class Senko:
     github = 'https://raw.githubusercontent.com'
 
-    def __init__(self, files, user, repo, url=None, branch='master', working_dir='app', headers=[]):
+    def __init__(self, files, user, repo, url=None, branch='master', working_dir='app', headers={}):
         """Senko OTA agent class.
 
         Args:
