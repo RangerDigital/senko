@@ -1,5 +1,8 @@
 import urequests
-import uhashlib
+try:
+    from uhashlib import sha1 as sha
+except ImportError as _:
+    from uhashlib import sha256 as sha
 
 
 class Senko:
@@ -24,8 +27,8 @@ class Senko:
         self.files = files
 
     def _check_hash(self, x, y):
-        x_hash = uhashlib.sha1(x.encode())
-        y_hash = uhashlib.sha1(y.encode())
+        x_hash = sha(x.encode())
+        y_hash = sha(y.encode())
 
         x = x_hash.digest()
         y = y_hash.digest()
