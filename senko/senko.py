@@ -1,12 +1,34 @@
-import urequests
+import mrequests as requests
 import uhashlib
+import gc
+import os
 
+def file_or_dir_exists(filename):
+    try:
+        os.stat(filename)
+        return True
+    except OSError:
+        return False
+
+def split(path):
+    if path == "":
+        return ("", "")
+    r = path.rsplit("/", 1)
+    if len(r) == 1:
+        return ("", path)
+    head = r[0] #.rstrip("/")
+    if not head:
+        head = "/"
+    return (head, r[1])
+
+def dirname(path):
+    return split(path)[0]
 
 class Senko:
     raw = "https://raw.githubusercontent.com"
     github = "https://github.com"
 
-    def __init__(self, user, repo, url=None, branch="master", working_dir="app", files=["boot.py", "main.py"], headers={}):
+    def __init__(self, user, repo, url=None, branch="master", working_dir="app", files=["boot.py", "main.py"], headers={}, cleanup=[], buffersize=4096, debug=False):
         """Senko OTA agent class.
 
         Args:
@@ -16,51 +38,100 @@ class Senko:
             working_dir (str): Directory inside GitHub repo where the micropython app is.
             url (str): URL to root directory.
             files (list): Files included in OTA update.
-            headers (list, optional): Headers for urequests.
+            headers (list, optional): Headers for urequests,
+                e.g. 'Authorization': 'token {}'.format(token)
+            cleanup (list, optional): Paths to clean up (delete)
+            buffersize (number, optional): Buffer size in bytes.
+            debug (boolean, optional): Print debug information
         """
         self.base_url = "{}/{}/{}".format(self.raw, user, repo) if user else url.replace(self.github, self.raw)
         self.url = url if url is not None else "{}/{}/{}".format(self.base_url, branch, working_dir)
         self.headers = headers
         self.files = files
+        self.cleanup = cleanup
+        self.debug = debug
+        self.buffersize = buffersize
 
-    def _check_hash(self, x, y):
-        x_hash = uhashlib.sha1(x.encode())
-        y_hash = uhashlib.sha1(y.encode())
 
-        x = x_hash.digest()
-        y = y_hash.digest()
+    def _stream_to_hash(self, stream):
+        hasher = uhashlib.sha1()
+        while True:
+            gc.collect()
+            data = stream.read(self.buffersize)
+            if not data:
+                break
+            hasher.update(data)
+        digest = hasher.digest()
+        return digest
 
-        if str(x) == str(y):
-            return True
-        else:
-            return False
+    def _compute_file_hash(self, file):
+        digest = ""
+        try:
+            reader = open(file, 'rb')
+            digest = self._stream_to_hash(reader)
+            reader.close()
+        except Exception as e:
+            if self.debug:
+                print('missing file', file, e)
+        if self.debug:
+            print('_compute_file_hash', file, digest)
+        return digest
 
-    def _get_file(self, url):
-        payload = urequests.get(url, headers=self.headers)
-        code = payload.status_code
-
-        if code == 200:
-            return payload.text
-        else:
+    def _compute_url_hash(self, url):
+        r = requests.get(url, headers=self.headers)
+        if r.status_code != 200:
+            if self.debug:
+                print('URL not loaded', url, r.status_code)
             return None
+
+        digest = self._stream_to_hash(r)
+        if self.debug:
+            print('_compute_url_hash', url, digest)
+        return digest
+
+    def _stream_url_to_file(self, url, file):
+        try:
+            r = requests.get(url, headers=self.headers)
+            if r.status_code != 200:
+                if self.debug:
+                    print('URL not loaded', url, r.status_code)
+                return None
+
+            path = dirname(file)
+            if not file_or_dir_exists(path):
+                os.mkdir(path)
+
+            with open(file, 'wb') as writer:
+                # print('writer', writer)
+                while True:
+                    gc.collect()
+                    data = r.read(self.buffersize)
+                    if not data:
+                        break
+                    writer.write(data)
+            return None
+        except Exception as e:
+            if self.debug:
+                print('write error', url, file, e)
+            return None
+
+        if self.debug:
+            print('_stream_url_to_file', file, url)
+
 
     def _check_all(self):
         changes = []
 
         for file in self.files:
-            latest_version = self._get_file(self.url + "/" + file)
-            if latest_version is None:
-                continue
+            gc.collect()
+            local_hash = self._compute_file_hash(file)
+            latest_hash = self._compute_url_hash(self.url + "/" + file)
 
-            try:
-                with open(file, "r") as local_file:
-                    local_version = local_file.read()
-            except:
-                local_version = ""
-
-            if not self._check_hash(latest_version, local_version):
+            if str(local_hash) != str(latest_hash):
                 changes.append(file)
 
+        if self.debug:
+            print("found changes", changes)
         return changes
 
     def fetch(self):
@@ -71,8 +142,8 @@ class Senko:
         """
         if not self._check_all():
             return False
-        else:
-            return True
+
+        return True
 
     def update(self):
         """Replace all changed files with newer one.
@@ -83,10 +154,21 @@ class Senko:
         changes = self._check_all()
 
         for file in changes:
-            with open(file, "w") as local_file:
-                local_file.write(self._get_file(self.url + "/" + file))
+            gc.collect()
+            if self.debug:
+                print("writing to", file)
+            self._stream_url_to_file(self.url + "/" + file, file)
+
+        for file in self.cleanup:
+            if self.debug:
+                print("removing file", file)
+            try:
+                os.remove(file)
+            except Exception as e:
+                if self.debug:
+                    print("failed to remove file", file, e)
 
         if changes:
             return True
-        else:
-            return False
+
+        return False
